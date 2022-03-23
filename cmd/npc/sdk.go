@@ -12,12 +12,15 @@ var cl *client.TRPClient
 
 //export StartClientByVerifyKey
 func StartClientByVerifyKey(serverAddr, verifyKey, connType, proxyUrl *C.char) int {
-	_ = logs.SetLogger("store")
+	logs.SetLogger("store")
 	if cl != nil {
 		cl.Close()
 	}
 	cl = client.NewRPClient(C.GoString(serverAddr), C.GoString(verifyKey), C.GoString(connType), C.GoString(proxyUrl), nil, 60)
-	cl.Start()
+	go func() {
+		cl.Start()
+		return
+	}()
 	return 1
 }
 
